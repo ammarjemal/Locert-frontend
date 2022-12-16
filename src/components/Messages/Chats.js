@@ -8,6 +8,7 @@ import { db} from '../../firebase';
 import { useAuth } from "../../store/auth-context";
 import { ChatContext } from '../../store/chat-context';
 import { v4 as uuid } from "uuid";
+import noChatFound from "../../assests/no-chats.svg";
 // import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
 
 const Chats = (props) => {
@@ -67,20 +68,23 @@ const Chats = (props) => {
     }
     return (
         <div className={`message h-full w-full flex flex-col ${props.className}`}>
+            {/* Top */}
             <div className="message-header p-2 w-full flex bg-[#192433]">
                 <img className="ml-2 ring-1 ring-emerald-500 w-10 h-10 rounded-full" src={data.user?.photoURL} alt='User profile'/>
                 <div className="ml-2 flex flex-col items-start text-sm">
                     <p className="font-semibold">{data.user?.displayName}</p>
                 </div>
             </div>
+            {/* Middle */}
             <div className={`message-content p-1 flex flex-col justify-end ${error && "justify-center items-center"} w-full h-full`}>
                 {error && <p className='font-semibold text-sm'>{error}</p>}
                 {(!error && isLoading) && <Spinner type='main'/>}
-                
+                {(!error && !isLoading && !messages.length) && <div className='m-auto'><img className='w-[150px]' src={noChatFound} alt=''/><p className='text-sm text-center mt-2'>No messages yet</p></div>}
                 {(!error && !isLoading) && messages.map((m) => (
                     <ChatItem message={m} key={m.id} />
                 ))}
             </div>
+            {/* Bottom */}
             <form className="w-full flex bg-[#192433]" onSubmit={handleSend}>
                 <textarea id="chat" value={text} onChange={messageChangeHandler} rows="1" className="resize-none bg-inherit outline-none block p-2.5 w-full text-sm text-slate-100 dark:bg-slate-800 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Write a message..."></textarea>
                 <button type="submit" className="inline-flex justify-center p-2 text-emerald-400 hover:text-emerald-300 hover:bg-emerald-900 cursor-pointer  dark:text-blue-500 dark:hover:bg-gray-600">

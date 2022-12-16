@@ -17,7 +17,7 @@ const Search = (props) => {
   const [error, setError] = useState(null);
 
   const { currentUser } = useAuth();
-  const { user } = props;
+  const { user, setUserSelected, selectUserHandler } = props;
   const handleSearch = async () => {
     const userData = await searchUsers(username, {setError, setUsername});
     setUsers(userData);
@@ -61,6 +61,8 @@ const Search = (props) => {
         });
         console.log(user.uid);
       }
+      selectUserHandler(user);
+      setUserSelected(true);
     } catch (err) {
         setError(err?.message)
         console.log(err);
@@ -68,7 +70,7 @@ const Search = (props) => {
 
     setUsers(null);
     setUsername("")
-  },[currentUser.displayName, currentUser.photoURL, currentUser.uid]);
+  },[currentUser.displayName, currentUser.photoURL, currentUser.uid, setUserSelected, selectUserHandler]);
 
   useEffect(() => {
     console.log(user);

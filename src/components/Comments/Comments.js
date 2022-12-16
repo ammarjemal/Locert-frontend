@@ -6,6 +6,7 @@ import { useAuth } from "../../store/auth-context";
 import { Fragment } from "react";
 import Toast from "../UI/Toast";
 import { getComments, postComment } from "../../api/articleApi";
+import { uuidv4 } from "@firebase/util";
 const Comments = (props) => {
     const [isLoading, setIsLoading] = useState(false);
     const [isPosting, setIsPosting] = useState(false);
@@ -32,6 +33,7 @@ const Comments = (props) => {
         }
         setIsPosting(true);
         const commentData = {
+            commentId: uuidv4(),
             uid: currentUser.uid,
             author: currentUser.displayName,
             photoURL: currentUser.photoURL,
@@ -39,13 +41,13 @@ const Comments = (props) => {
             commentText: commentRef.current.value,
             likes: [],
         }
-        const { commentId } = await postComment(commentData, props.postId, { setError });
+        await postComment(commentData, props.postId, { setError });
         props.setCommentCount(props.commentCount + 1);
         setIsPosting(false);
         const commentDataUpdated = {
             ...commentData,
             likesCount: 0,
-            id: commentId || Math.random(),
+            id: commentData.commentId || Math.random(),
         }
         setComments([
             commentDataUpdated,

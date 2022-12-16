@@ -144,7 +144,7 @@ export default function Signup(){
             userDefaultImage = femaleDefaultImage;
         }
         setPage(page + 1);
-        // registerToFirebase({...formData, isAdmin: false, isBanned: false},{setError,setIsAuthenticating, setPage}, signup, page, userDefaultImage);
+        registerToFirebase({...formData, isAdmin: false, isBanned: false},{setError,setIsAuthenticating, setPage}, signup, page, userDefaultImage);
     }
     return(
         <Fragment>

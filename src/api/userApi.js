@@ -80,10 +80,11 @@ export const searchUsers = async (username, { setError }) => {
             throw new Error(data.message || 'Could not search users');
         }
         console.log(data);
-        for(const key in data){
+        for(const key in data["researchers"]){
+            console.log(key);
             loadedUsers.push({
                 id: key,
-                ...data[key]
+                ...data["researchers"][key]
             })
         }
         // setUsername('');

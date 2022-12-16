@@ -40,7 +40,7 @@ export function registerToFirebase (userData, stateMethods, signup, page, userDe
         }
       });
 }
-/// save user data on firebase without backend code
+/// save user data on our database
 export function insertUserData(userData,stateMethods) {
         stateMethods.setIsLoading(true);
         // fetch('https://react-project-dff24-default-rtdb.firebaseio.com/researchers.json', {
@@ -85,7 +85,7 @@ export function insertUserData(userData,stateMethods) {
         stateMethods.setIsLoading(false);
     })
     .catch((err) => {
-        // deleteFromFirebase(userData.email);
+        deleteFromFirebase(userData.email);
         stateMethods.setIsLoading(false);
         stateMethods.setError(err.message);
     });

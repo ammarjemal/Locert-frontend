@@ -19,7 +19,6 @@ const UsersList = (props) => {
       const unsub = onSnapshot(doc(db, "userChats", currentUser.uid), (doc) => {
         setChats(doc.data());
         setIsLoading(false);
-        console.log(doc.data());
       });
 
       return () => {
@@ -41,14 +40,14 @@ const UsersList = (props) => {
 
     return (
       <div className={`scroll5 ${props.className}`}>
-        <Search user={user}/>
+        <Search user={user} selectUserHandler={handleSelect} setUserSelected={setUserSelected}/>
         {!isLoggedIn && <p>Please <Link to="/login">login</Link> to your account</p>}
         {isLoading && <Spinner type='main'/>}
         {chats && Object.entries(chats)?.sort((a,b)=>b[1].date - a[1].date).map((chat) => (
           <UserItem
             key={chat[0]}
             id={chat[0]}
-            uid={chat[1].userInfo.uid}
+            uid={chat[1].userInfo.uid || null}
             displayName={chat[1].userInfo.displayName}
             photoURL={chat[1].userInfo.photoURL}
             lastMessage={chat[1].lastMessage?.text}

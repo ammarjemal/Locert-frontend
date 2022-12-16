@@ -37,7 +37,7 @@ const NewPost = () => {
             photoURL: currentUser.photoURL,
             date:  new Date().getTime(),
             articleText: article,
-            status: "pending",
+            // status is PENDING by default
             comments: [],
             likes: [],
         }

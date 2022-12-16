@@ -2,8 +2,9 @@ import { ObjectLength } from "../extras/extra-functions";
 
 export const likePost = async (id, likeData, {setError}) => {
     try{
-        const response = await fetch(`https://react-project-dff24-default-rtdb.firebaseio.com/articles/${id}/likes.json`, {
-            method: 'POST',
+       
+        const response = await fetch(`http://localhost:8001/api/v1/articles/like-post/${id}`, {
+            method: 'PATCH',
             body: JSON.stringify(likeData),
             headers: {
                 'Content-Type': 'application/json',
@@ -21,8 +22,11 @@ export const likePost = async (id, likeData, {setError}) => {
 }
 export const unlikePost = async (id, likeData, {setError}) => {
     try{
-        const response = await fetch(`https://react-project-dff24-default-rtdb.firebaseio.com/articles/${id}/likes.json`, {
-            method: 'DELETE',
+        console.log(likeData);
+        console.log(id);
+        // return ;
+        const response = await fetch(`http://localhost:8001/api/v1/articles/unlike-post/${id}`, {
+            method: 'PATCH',
             body: JSON.stringify(likeData),
             headers: {
                 'Content-Type': 'application/json',
@@ -42,7 +46,7 @@ export const getArticles = async (currentUser, {setError, setIsLoading}) => {
     setIsLoading(true);
     let loadedArticles = [];
     try{
-        const url = `https://react-project-dff24-default-rtdb.firebaseio.com/articles.json`;
+        const url = 'http://localhost:8001/api/v1/articles';
         const response = await fetch(url, {
             method: 'GET',
         });
@@ -50,21 +54,23 @@ export const getArticles = async (currentUser, {setError, setIsLoading}) => {
         if (!response.ok) {
             throw new Error(data.message || 'Cannot get articles.');
         }
-        for(const key in data){
+        const articles = data["data"]["articles"];
+        console.log(articles);
+        for(const key in articles){
             let liked = false;
-            for(const i in data[key].likes){
-                if(data[key].likes[i].uid === (currentUser && currentUser.uid)){
+            for(const i in articles[key].likes){
+                if(articles[key].likes[i].uid === (currentUser && currentUser.uid)){
                     liked = true;
                     break;
                 }
             }
             loadedArticles.push({
-                id: key,
-                likes: data[key].likes,
+                id: articles[key]._id,
+                likes: articles[key].likes,
                 liked: liked,
-                likesCount: data[key].likes ? ObjectLength(data[key].likes) : 0,
-                commentsCount: data[key].comments ? ObjectLength(data[key].comments) : 0,
-                ...data[key]
+                likesCount: articles[key].likes ? ObjectLength(articles[key].likes) : 0,
+                commentsCount: articles[key].comments ? ObjectLength(articles[key].comments) : 0,
+                ...articles[key]
             });
         }
         setIsLoading(false);
@@ -78,7 +84,7 @@ export const getArticles = async (currentUser, {setError, setIsLoading}) => {
 }
 
 export const postArticle = (articleData, {setError, setSuccess, setIsSubmitting}, resetArticle) => {
-    fetch('https://react-project-dff24-default-rtdb.firebaseio.com/articles.json', {
+    fetch('http://localhost:8001/api/v1/articles', {
             method: 'POST',
             body: JSON.stringify(articleData),
             headers: {
@@ -114,8 +120,9 @@ export const postArticle = (articleData, {setError, setSuccess, setIsSubmitting}
 
 export const postComment = async (commentData, postId, {setError}) => {
     try{
-        const response = await fetch(`https://react-project-dff24-default-rtdb.firebaseio.com/articles/${postId}/comments.json`, {
-            method: 'POST',
+        console.log(commentData);
+        const response = await fetch(`http://localhost:8001/api/v1/articles/post-comment/${postId}`, {
+            method: 'PATCH',
             body: JSON.stringify(commentData),
             headers: {
                 'Content-Type': 'application/json',
@@ -125,8 +132,9 @@ export const postComment = async (commentData, postId, {setError}) => {
         if (!response.ok) {
             throw new Error(data.message || 'Could not add comment.');
         }
+        console.log(data);
         setError(null);
-        return { commentId: data.name };
+        // return { commentId: commentData.co };
     }catch(error){
         setError(error.message || "Something went wrong");
     }
@@ -135,7 +143,7 @@ export const postComment = async (commentData, postId, {setError}) => {
 export const getComments = async (currentUser, postId, {setError, setIsLoading}) => {
     let loadedComments = [];
     try{
-        const url = `https://react-project-dff24-default-rtdb.firebaseio.com/articles/${postId}/comments.json`;
+        const url = `http://localhost:8001/api/v1/articles/get-comments/${postId}`;
         const response = await fetch(url, {
             method: 'GET',
         });
@@ -143,19 +151,20 @@ export const getComments = async (currentUser, postId, {setError, setIsLoading})
         if (!response.ok) {
             throw new Error(data.message || 'Cannot get comments.');
         }
-        for(const key in data){
+        const comments = data["data"]["comments"];
+        for(const key in comments){
             let liked = false;
-            for(const i in data[key].likes){
-                if(data[key].likes[i].uid === (currentUser && currentUser.uid)){
+            for(const i in comments[key].likes){
+                if(comments[key].likes[i].uid === (currentUser && currentUser.uid)){
                     liked = true;
                     break;
                 }
             }
             loadedComments.push({
                 id: key,
-                likesCount: data[key].likes ? ObjectLength(data[key].likes) : 0,
+                likesCount: comments[key].likes ? ObjectLength(comments[key].likes) : 0,
                 liked: liked,
-                ...data[key]
+                ...comments[key]
             });
         }
         setIsLoading(false);
@@ -171,8 +180,8 @@ export const getComments = async (currentUser, postId, {setError, setIsLoading})
 
 export const likeComment = async (postId, commentId, likeData, {setError}) => {
     try{
-        const response = await fetch(`https://react-project-dff24-default-rtdb.firebaseio.com/articles/${postId}/comments/${commentId}/likes.json`, {
-            method: 'POST',
+        const response = await fetch(`http://localhost:8001/api/v1/articles/like-comment/${postId}/${commentId}`, {
+            method: 'PATCH',
             body: JSON.stringify(likeData),
             headers: {
                 'Content-Type': 'application/json',
@@ -190,7 +199,7 @@ export const likeComment = async (postId, commentId, likeData, {setError}) => {
 }
 export const dislikeComment = async (postId, commentId, likeData, {setError}) => {
     try{
-        const response = await fetch(`https://react-project-dff24-default-rtdb.firebaseio.com/articles/${postId}/comments/${commentId}/likes.json`, {
+        const response = await fetch(`http://localhost:8001/api/v1/articles/like-comment/${postId}/${commentId}`, {
         method: 'DELETE',
             body: JSON.stringify(likeData),
             headers: {
