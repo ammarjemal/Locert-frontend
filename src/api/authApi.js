@@ -42,9 +42,9 @@ export function registerToFirebase (userData, stateMethods, signup, page, userDe
 }
 /// save user data on our database
 export function insertUserData(userData,stateMethods) {
-        stateMethods.setIsLoading(true);
-        // fetch('https://react-project-dff24-default-rtdb.firebaseio.com/researchers.json', {
-        fetch('http://localhost:8001/api/v1/researchers', {
+    stateMethods.setIsLoading(true);
+    // fetch('https://react-project-dff24-default-rtdb.firebaseio.com/researchers.json', {
+    fetch('http://localhost:8001/api/v1/researchers', {
         method: 'POST',
         body: JSON.stringify({
             displayName: userData.displayName,

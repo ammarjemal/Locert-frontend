@@ -85,37 +85,37 @@ export const getArticles = async (currentUser, {setError, setIsLoading}) => {
 
 export const postArticle = (articleData, {setError, setSuccess, setIsSubmitting}, resetArticle) => {
     fetch('http://localhost:8001/api/v1/articles', {
-            method: 'POST',
-            body: JSON.stringify(articleData),
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        })
-        .then((res) => {
-            if(res.ok){
-                setError(null);
-                return res.json();
-            }else{
-                return res.json().then((data) => {
-                    let errorMessage = 'Uploading failed!';
-                    if (data && data.error && data.error.message) {
-                        errorMessage = data.error.message;
-                    }
-                    throw new Error(errorMessage);
-                });
-            }
-        })
-        .then((data) => { // if successful
-            setSuccess("Article is uploaded successfully and is pending for approval")
+        method: 'POST',
+        body: JSON.stringify(articleData),
+        headers: {
+            'Content-Type': 'application/json',
+        },
+    })
+    .then((res) => {
+        if(res.ok){
             setError(null);
-            setIsSubmitting(false);
-            resetArticle();
-        })
-        .catch((err) => {
-            setIsSubmitting(false);
-            console.log(err.message);
-            setError(err.message);
-        });
+            return res.json();
+        }else{
+            return res.json().then((data) => {
+                let errorMessage = 'Uploading failed!';
+                if (data && data.error && data.error.message) {
+                    errorMessage = data.error.message;
+                }
+                throw new Error(errorMessage);
+            });
+        }
+    })
+    .then((data) => { // if successful
+        setSuccess("Article is uploaded successfully and is pending for approval")
+        setError(null);
+        setIsSubmitting(false);
+        resetArticle();
+    })
+    .catch((err) => {
+        setIsSubmitting(false);
+        console.log(err.message);
+        setError(err.message);
+    });
 }
 
 export const postComment = async (commentData, postId, {setError}) => {
