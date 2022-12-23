@@ -2,11 +2,12 @@ import auth from "../firebase";
 import { updateProfile } from "firebase/auth";
 import { db } from "../firebase";
 import { doc, setDoc } from "firebase/firestore";
+const serverLink = 'http://localhost:8001';
 
 export function registerToFirebase (userData, stateMethods, signup, page, userDefaultImage) {
     stateMethods.setIsAuthenticating(true);
     console.log(userDefaultImage);
-    signup(userData, "researcher")
+    signup(userData)
     .then((userCredential) => {
         stateMethods.setError(null);
         stateMethods.setIsAuthenticating(false);
@@ -43,8 +44,7 @@ export function registerToFirebase (userData, stateMethods, signup, page, userDe
 /// save user data on our database
 export function insertUserData(userData,stateMethods) {
     stateMethods.setIsLoading(true);
-    // fetch('https://react-project-dff24-default-rtdb.firebaseio.com/researchers.json', {
-    fetch('http://localhost:8001/api/v1/researchers', {
+    fetch(`${serverLink}/api/v1/researchers`, {
         method: 'POST',
         body: JSON.stringify({
             displayName: userData.displayName,
@@ -127,13 +127,19 @@ export function deleteFromFirebase (token) {
 // login handler
 export function loginUser(userData, stateMethods, login, history) {
     stateMethods.setIsAuthenticating(true);
-    login(userData.email,userData.password, "researcher")
+    login(userData.email, userData.password, stateMethods.setError)
     .then((userCredential) => {
+        if(!userCredential){
+            return false;
+        }
         stateMethods.setError(null);
         stateMethods.setIsAuthenticating(false);
+        return true;
     })
     .then((data) => { // if successfull
-        history.push('/');
+        if(data){
+            history.push('/');
+        }
         stateMethods.setIsAuthenticating(false);
     })
     .catch((err) => {
@@ -158,12 +164,11 @@ export function updateProfilePicture(userData, stateMethods, url, history) {
     updateProfile(auth.currentUser, {
         photoURL: url
     }).then(() => {
-        console.log(userData);
-        insertUserData({...userData, uid:auth.currentUser.uid, photoURL:url}, stateMethods);
+        insertUserData({...userData, uid: auth.currentUser.uid, photoURL: url}, stateMethods);
     }).then(() => {
         //create empty user chats on firestore
         setDoc(doc(db, "userChats", auth.currentUser.uid), {});
-        // history.push('/');
+        history.push('/');
     }).catch((error) => {
         stateMethods.setError(error.message);
     });

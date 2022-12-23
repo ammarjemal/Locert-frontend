@@ -8,17 +8,18 @@ const Posts = (props) => {
     const [articles, setArticles] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState(null);
+    const { fetchType, setArticlesCount } = props;
     function changeStatus (){
         fetchData();
     }
     const fetchData = useCallback(async () => {
         let fetchedPosts = [];
-        fetchedPosts = await getArticles(props.fetchType, { setIsLoading, setError });
-        console.log(fetchedPosts);
+        fetchedPosts = await getArticles(fetchType, { setIsLoading, setError });
+        setArticlesCount(fetchedPosts.length);
         if(fetchedPosts.length){
             setArticles(fetchedPosts);
         }
-    }, [props.fetchType]);
+    }, [fetchType, setArticlesCount]);
     useEffect(() => {
         fetchData();
     },[fetchData]);

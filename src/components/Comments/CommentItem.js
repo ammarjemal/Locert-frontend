@@ -1,4 +1,4 @@
-import userProfile from "../../assests/user-profile.png";
+import userProfile from "../../assets/user-profile.png";
 import { Heart, HeartFill } from "react-bootstrap-icons";
 import { useAuth } from "../../store/auth-context";
 import { Fragment, useState } from "react";
@@ -45,13 +45,13 @@ const CommentItem = (props) => {
             {error && <Toast type='error' show={true} setState={setError} message={error}/>}
             <div className="self-start comment w-full mt-3 border-b pb-3 text-sm">
                 <div className="flex items-center">
-                    <img src={props.photoURL || userProfile} alt="User profile" className="w-8 h-8 rounded-full"/>
+                    <img src={props.photoURL || userProfile} alt="User profile" className="w-8 h-8 object-cover rounded-full"/>
                     <div className="flex flex-col ml-2">
                         <span className="font-semibold">
                             {props.author}
                         </span>
                         <span className="text-xs">
-                            {date.getDay()} {month[date.getMonth()]} {date.getFullYear()}
+                            {date.getDate()} {month[date.getMonth()]} {date.getFullYear()}
                         </span>
                     </div>
                 </div>

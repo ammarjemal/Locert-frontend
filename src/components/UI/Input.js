@@ -1,5 +1,5 @@
 import { Fragment } from "react"
-
+import styles from "./styles.module.css";
 export default function Input({
     onChange,
     onKeyDown,
@@ -14,7 +14,7 @@ export default function Input({
     variant,
     children
 }){
-  const classes = `px-3 py-2 flex items-center justify-between my-5 rounded-xl appearance-none relative w-full border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-emerald-400 focus:border-emerald-400 focus:z-10 sm:text-sm ${className} ${isInValid && "border-rose-500"}`
+  const classes = `bg-inherit border border-slate-400 focus:ring focus:border-none focus:ring-slate-400 px-3 py-2 flex items-center justify-between my-5 rounded-xl appearance-none relative w-full placeholder-gray-500 text-gray-900 focus:outline-none focus:z-10 sm:text-sm ${className} ${isInValid && "border-rose-500"}`
   return(
     <Fragment>
       {variant==="search" &&
@@ -26,14 +26,14 @@ export default function Input({
             id={id}
             name={name}
             type={type}
-            className={classes}
+            className={classes+' '+styles.autofill}
             placeholder={placeholder}
           />
         </div>
       }
       {variant==="basic" &&
         <input
-          className={classes}
+          className={`${classes} ${styles.autofill}`}
           onChange={onChange}
           onBlur={onBlur}
           value={value}
@@ -46,7 +46,7 @@ export default function Input({
       {variant==="password" &&
         <div className={classes}>
           <input
-            className="w-full outline-none"
+            className={`w-full outline-none bg-inherit ${styles.autofill}`}
             onChange={onChange}
             onBlur={onBlur}
             value={value}
@@ -54,7 +54,7 @@ export default function Input({
             type={type}
             placeholder={placeholder}
             autoComplete="true"
-            />
+          />
             {children}
         </div>
       }

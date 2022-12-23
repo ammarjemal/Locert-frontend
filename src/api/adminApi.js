@@ -1,12 +1,13 @@
-// import { ObjectLength } from "../../../extras/extra-functions";
+const serverLink = 'http://localhost:8001';
+
 export const getArticles = async (fetchType, {setIsLoading, setError}) => {
     setIsLoading(true);
     let loadedArticles = [];
     let url = '';
     if(fetchType === "ALL"){
-        url = `https://react-project-dff24-default-rtdb.firebaseio.com/articles.json`;
+        url = `${serverLink}/api/v1/articles`;
     } else if(fetchType === "PENDING" || fetchType === "APPROVED" || fetchType === "DECLINED"){
-        url = `https://react-project-dff24-default-rtdb.firebaseio.com/articles.json?orderBy="status"&equalTo="${fetchType}"&print=pretty`;
+        url = `${serverLink}/api/v1/articles?status=${fetchType}`;
     } else {
         return;
     }
@@ -18,10 +19,11 @@ export const getArticles = async (fetchType, {setIsLoading, setError}) => {
         if (!response.ok) {
             throw new Error(data.message || 'Could not get articles.');
         }
-        for(const key in data){
+        const articles = data["data"]["articles"];
+        for(const key in articles){
             loadedArticles.push({
-                id: key,
-                ...data[key]
+                id: articles[key]._id,
+                ...articles[key]
             });
         }
         setIsLoading(false);
@@ -35,7 +37,7 @@ export const getArticles = async (fetchType, {setIsLoading, setError}) => {
 
 export const changeArticleStatus = async (articleId, status, { setError, setIsLoading }) => {
     try{
-        const response = await fetch(`https://react-project-dff24-default-rtdb.firebaseio.com/articles/${articleId}.json`, {
+        const response = await fetch(`${serverLink}/api/v1/admin/change-article-status/${articleId}`, {
             method: 'PATCH',
             body: JSON.stringify({
                 status: status
@@ -57,17 +59,18 @@ export const changeArticleStatus = async (articleId, status, { setError, setIsLo
     return true;
 }
 
-
 export const getResearchers = async (fetchType, { setError, setIsLoading }) => {
     setIsLoading(true);
     let loadedResearchers = [];
     let url = '';
     if(fetchType === "ALL"){
-        url = `https://react-project-dff24-default-rtdb.firebaseio.com/researchers.json`;
-    } else if(fetchType === "BASIC" || fetchType === "ADMIN"){
-        url = `https://react-project-dff24-default-rtdb.firebaseio.com/researchers.json?orderBy="status"&equalTo="${fetchType}"&print=pretty`;
+        url = `${serverLink}/api/v1/admin/get-researchers`;
+    } else if(fetchType === "BASIC"){
+        url = `${serverLink}/api/v1/admin/get-researchers?isAdmin=false`;
+    } else if(fetchType === "ADMIN"){
+        url = `${serverLink}/api/v1/admin/get-researchers?isAdmin=true`;
     } else if(fetchType === "BANNED"){
-        url = `https://react-project-dff24-default-rtdb.firebaseio.com/researchers.json?orderBy="isBanned"&equalTo=true&print=pretty`;
+        url = `${serverLink}/api/v1/admin/get-researchers?isBanned=true`;
     }else {
         return loadedResearchers;
     }
@@ -78,12 +81,14 @@ export const getResearchers = async (fetchType, { setError, setIsLoading }) => {
         console.log(response);
         const data = await response.json();
         if (!response.ok) {
-            throw new Error(data.message || 'Could not get users.');
+            throw new Error(data.message || 'Could not get researchers.');
         }
-        for(const key in data){
+        const researchers = data["data"]["researchers"];
+        console.log(researchers);
+        for(const key in researchers){
             loadedResearchers.push({
-                id: key,
-                ...data[key]
+                id: researchers[key]._id,
+                ...researchers[key]
             });
         }
         setIsLoading(false);
@@ -95,9 +100,8 @@ export const getResearchers = async (fetchType, { setError, setIsLoading }) => {
     return loadedResearchers;
 }
 export const changeUserIsBannedStatus = async (id, isBanned, { setError, setIsLoading }) => {
-    // console.log(id, isBanned); return;
     try{
-        const response = await fetch(`https://react-project-dff24-default-rtdb.firebaseio.com/researchers/${id}.json`, {
+        const response = await fetch(`${serverLink}/api/v1/admin/change-researcher-status/${id}`, {
             method: 'PATCH',
             body: JSON.stringify({
                 isBanned
@@ -121,7 +125,7 @@ export const changeUserIsBannedStatus = async (id, isBanned, { setError, setIsLo
 export const changeUserIsAdminStatus = async (id, isAdmin, { setError, setIsLoading2: setIsLoading }) => {
     // console.log(id, isBanned); return;
     try{
-        const response = await fetch(`https://react-project-dff24-default-rtdb.firebaseio.com/researchers/${id}.json`, {
+        const response = await fetch(`${serverLink}/api/v1/admin/change-researcher-status/${id}`, {
             method: 'PATCH',
             body: JSON.stringify({
                 isAdmin
@@ -129,12 +133,49 @@ export const changeUserIsAdminStatus = async (id, isAdmin, { setError, setIsLoad
             headers: {
                 'Content-Type': 'application/json',
             },
-        });
+        }); 
         const data = await response.json();
         setIsLoading(false);
         if (!response.ok) {
             throw new Error(data.message || 'Something went wrong.');
         }
+    } catch(error){
+        setIsLoading(false);
+        setError(error.message || "Something went wrong");
+        return false;
+    }
+    return true;
+}
+
+export const login = async (uid, password, { setError, setIsLoading }, adminLogin, history) => {
+    try{
+        const response = await fetch(`${serverLink}/api/v1/admin/login`, {
+            method: 'POST',
+            body: JSON.stringify({
+                uid,
+                password
+            }),
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        }); 
+        const data = await response.json();
+        if (!response.ok) {
+            throw new Error(data.message || 'Something went wrong.');
+        }
+        if(data.status === "success"){
+            adminLogin(uid);
+            history.push('/admin/articles');
+        }else if(data.status === "fail"){
+            setError("Incorrect password");
+        }else if(data.status === "no-privilege"){
+            setError("You don't have administrator privilege");
+        }else if(data.status === "fail"){
+            setError("Incorrect password");
+        }else if(data.status === "not-found"){
+            setError("Admin account not found");
+        }
+        setIsLoading(false);
     } catch(error){
         setIsLoading(false);
         setError(error.message || "Something went wrong");

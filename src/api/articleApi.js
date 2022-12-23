@@ -1,9 +1,10 @@
 import { ObjectLength } from "../extras/extra-functions";
+const serverLink = 'http://localhost:8001';
 
 export const likePost = async (id, likeData, {setError}) => {
     try{
        
-        const response = await fetch(`http://localhost:8001/api/v1/articles/like-post/${id}`, {
+        const response = await fetch(`${serverLink}/api/v1/articles/like-post/${id}`, {
             method: 'PATCH',
             body: JSON.stringify(likeData),
             headers: {
@@ -22,10 +23,8 @@ export const likePost = async (id, likeData, {setError}) => {
 }
 export const unlikePost = async (id, likeData, {setError}) => {
     try{
-        console.log(likeData);
-        console.log(id);
         // return ;
-        const response = await fetch(`http://localhost:8001/api/v1/articles/unlike-post/${id}`, {
+        const response = await fetch(`${serverLink}/api/v1/articles/unlike-post/${id}`, {
             method: 'PATCH',
             body: JSON.stringify(likeData),
             headers: {
@@ -46,7 +45,7 @@ export const getArticles = async (currentUser, {setError, setIsLoading}) => {
     setIsLoading(true);
     let loadedArticles = [];
     try{
-        const url = 'http://localhost:8001/api/v1/articles';
+        const url = `${serverLink}/api/v1/articles?status=APPROVED`;
         const response = await fetch(url, {
             method: 'GET',
         });
@@ -55,7 +54,6 @@ export const getArticles = async (currentUser, {setError, setIsLoading}) => {
             throw new Error(data.message || 'Cannot get articles.');
         }
         const articles = data["data"]["articles"];
-        console.log(articles);
         for(const key in articles){
             let liked = false;
             for(const i in articles[key].likes){
@@ -79,12 +77,12 @@ export const getArticles = async (currentUser, {setError, setIsLoading}) => {
         setIsLoading(false);
         setError(error.message);
     }
-    console.log(loadedArticles);
     return loadedArticles;
 }
 
 export const postArticle = (articleData, {setError, setSuccess, setIsSubmitting}, resetArticle) => {
-    fetch('http://localhost:8001/api/v1/articles', {
+    console.log(articleData);
+    fetch(`${serverLink}/api/v1/articles`, {
         method: 'POST',
         body: JSON.stringify(articleData),
         headers: {
@@ -117,11 +115,11 @@ export const postArticle = (articleData, {setError, setSuccess, setIsSubmitting}
         setError(err.message);
     });
 }
-
+// comments
 export const postComment = async (commentData, postId, {setError}) => {
     try{
         console.log(commentData);
-        const response = await fetch(`http://localhost:8001/api/v1/articles/post-comment/${postId}`, {
+        const response = await fetch(`${serverLink}/api/v1/articles/post-comment/${postId}`, {
             method: 'PATCH',
             body: JSON.stringify(commentData),
             headers: {
@@ -142,8 +140,9 @@ export const postComment = async (commentData, postId, {setError}) => {
 
 export const getComments = async (currentUser, postId, {setError, setIsLoading}) => {
     let loadedComments = [];
+    console.log(postId);
     try{
-        const url = `http://localhost:8001/api/v1/articles/get-comments/${postId}`;
+        const url = `${serverLink}/api/v1/articles/get-comments/${postId}`;
         const response = await fetch(url, {
             method: 'GET',
         });
@@ -151,6 +150,7 @@ export const getComments = async (currentUser, postId, {setError, setIsLoading})
         if (!response.ok) {
             throw new Error(data.message || 'Cannot get comments.');
         }
+        console.log(data);
         const comments = data["data"]["comments"];
         for(const key in comments){
             let liked = false;
@@ -161,7 +161,7 @@ export const getComments = async (currentUser, postId, {setError, setIsLoading})
                 }
             }
             loadedComments.push({
-                id: key,
+                id: comments[key]._id,
                 likesCount: comments[key].likes ? ObjectLength(comments[key].likes) : 0,
                 liked: liked,
                 ...comments[key]
@@ -180,7 +180,7 @@ export const getComments = async (currentUser, postId, {setError, setIsLoading})
 
 export const likeComment = async (postId, commentId, likeData, {setError}) => {
     try{
-        const response = await fetch(`http://localhost:8001/api/v1/articles/like-comment/${postId}/${commentId}`, {
+        const response = await fetch(`${serverLink}/api/v1/articles/like-comment/${postId}/${commentId}`, {
             method: 'PATCH',
             body: JSON.stringify(likeData),
             headers: {
@@ -199,7 +199,7 @@ export const likeComment = async (postId, commentId, likeData, {setError}) => {
 }
 export const dislikeComment = async (postId, commentId, likeData, {setError}) => {
     try{
-        const response = await fetch(`http://localhost:8001/api/v1/articles/like-comment/${postId}/${commentId}`, {
+        const response = await fetch(`${serverLink}/api/v1/articles/like-comment/${postId}/${commentId}`, {
         method: 'DELETE',
             body: JSON.stringify(likeData),
             headers: {

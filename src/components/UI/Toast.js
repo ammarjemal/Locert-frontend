@@ -8,13 +8,13 @@ const ToastMessage = (props) => {
     const [showToast, setShowToast] = useState(props.show);
     useEffect(() => {
         const timeout = setTimeout(() => {
-            // setState(null);
+            setState(null);
             setShowToast(false);
         }, 3000);
         return (() => {
             clearTimeout(timeout);
         })
-    },[setState])
+    },[setState, props.show])
     return (
         <div className='z-50 flex items-center fixed left-0 right-0 bottom-0 m-auto w-80 bg-gray-800'>
             <Transition

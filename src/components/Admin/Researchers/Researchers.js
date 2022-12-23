@@ -35,6 +35,7 @@ const Researchers = (props) => {
                         id={user.id}
                         uid={user.uid}
                         displayName={user.displayName}
+                        joinedAt={user.joinedAt}
                         photoURL={user.photoURL}
                         isAdmin={user.isAdmin}
                         isBanned={user.isBanned}

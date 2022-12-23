@@ -1,13 +1,13 @@
 import { Fragment } from "react";
 import MainNavigation from "./MainNavigation";
-import logo from "../../assests/logo.svg";
-import userProfilePic from "../../assests/user-profile.png";
+import logo from "../../assets/logo.svg";
+import userProfilePic from "../../assets/user-profile.png";
 
 const Layout = (props) => {
     return (
         <Fragment>
             <MainNavigation logo={logo} userProfilePic={userProfilePic}/>
-            <main className="overlow-x-auto pt-5">
+            <main className="overlow-x-auto">
                 {props.children}
             </main>
         </Fragment>

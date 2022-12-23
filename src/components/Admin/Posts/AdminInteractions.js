@@ -13,17 +13,17 @@ const AdminInteractions = (props) => {
             ${props.status === "DECLINED" && 'text-rose-500'}
             `}>
             <Dot className='w-5 h-5'/>
-            {capitalizeFirst(props.status)}
+            {props.status && capitalizeFirst(props.status)}
         </span>
         <div className='flex items-center'>
             {props.status !== "APPROVED" && 
-                <button disabled={props.isLoading} onClick={props.onApproveClickHandler} className='flex items-center bg-emerald-100 hover:bg-emerald-200 text-emerald-600 hover:text-emerald-700 px-2 py-1 mr-3 rounded-lg disabled:cursor-not-allowed'>
-                    {props.isLoading ? <Spinner className="w-4 h-4 mr-1 text-emerald-600" type="main"/> : <Check2 className='mr-1'/>}Approve
+                <button disabled={props.isApproveLoading} onClick={props.onApproveClickHandler} className='flex items-center bg-emerald-100 hover:bg-emerald-200 text-emerald-600 hover:text-emerald-700 px-2 py-1 mr-3 rounded-lg disabled:cursor-not-allowed'>
+                    {props.isApproveLoading ? <Spinner className="w-4 h-4 mr-1 text-emerald-600" type="main"/> : <Check2 className='mr-1'/>}Approve
                 </button>
             }
             {props.status !== "DECLINED" &&
-                <button disabled={props.isLoading} onClick={props.onDeclineClickHandler} className='flex items-center bg-rose-100 hover:bg-rose-200 text-rose-600 hover:text-rose-700 px-2 py-1 rounded-lg disabled:cursor-not-allowed'>
-                    {props.isLoading ? <Spinner className="w-4 h-4 mr-1" type="main"/> : <X className='w-4 h-4 mr-1'/>}Decline
+                <button disabled={props.isDeclineLoading} onClick={props.onDeclineClickHandler} className='flex items-center bg-rose-100 hover:bg-rose-200 text-rose-600 hover:text-rose-700 px-2 py-1 rounded-lg disabled:cursor-not-allowed'>
+                    {props.isDeclineLoading ? <Spinner className="w-4 h-4 mr-1" type="main"/> : <X className='w-4 h-4 mr-1'/>}Decline
                 </button>
             }
         </div>

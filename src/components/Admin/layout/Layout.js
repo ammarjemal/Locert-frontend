@@ -1,7 +1,7 @@
 import { Fragment } from "react";
 import MainNavigation from "./MainNavigation";
-import logo from "../../../assests/logo.svg";
-import userProfilePic from "../../../assests/user-profile.png";
+import logo from "../../../assets/logo.svg";
+import userProfilePic from "../../../assets/user-profile.png";
 import Sidebar from "./Sidebar";
 
 const Layout = (props) => {

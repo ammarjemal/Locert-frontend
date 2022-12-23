@@ -22,8 +22,8 @@ export const UserProfile = (props) => {
         <Fragment>
             {
                 <div className='mt-5 w-full flex flex-col items-center'>
-                    <img className="w-24 h-24 ring-1 ring-emerald-500 rounded-full" src={props.photoURL} alt='User profile'/>
-                    <div className='mt-4 w-fit'>
+                    <img className="w-24 h-24 ring-1 ring-emerald-500 rounded-full object-cover" src={props.photoURL} alt='User profile'/>
+                    <div className='mt-4 w-fit space-y-2'>
                         <p className='font-semibold flex items-center mt-1'><Person className={iconClasses}/>{props.displayName}</p>
                         <p className='flex items-center mt-1'><Envelope className={iconClasses}/><Link className='text-emerald-500' to={`mailto:${props.email}`}>{props.email}</Link></p>
                         <p className='font-semibold flex items-center mt-1'><GenderAmbiguous className={iconClasses}/>{props.gender}</p>

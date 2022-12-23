@@ -84,13 +84,13 @@ const Stepper = ({ steps, currentStep }) => {
             : "flex items-center"
         }
       >
-        <div className="relative flex flex-col items-center text-gray-400">
+        <div className="relative flex flex-col items-center text-slate-500">
           <div
-            className={`rounded-full transition duration-500 ease-in-out border-2 border-gray-300 h-12 w-12 flex items-center justify-center py-3
+            className={`rounded-full transition duration-500 ease-in-out border-2 border-slate-400 h-12 w-12 flex items-center justify-center py-3
                 ${step.selected
                 ? "bg-emerald-400 text-white font-bold border border-emerald-400 " : ""}
                 ${step.next
-                ? "border-emerald-400 text-emerald-400" : ""
+                ? "border-emerald-400 text-emerald-500" : ""
                 }
                 `
               }
@@ -102,10 +102,10 @@ const Stepper = ({ steps, currentStep }) => {
             )}
           </div>
           <div
-            className={`absolute top-0 text-center mt-16 w-32 text-xs font-medium uppercase
-            ${step.highlighted ? "text-gray-900" : "text-gray-400"}
-            ${step.next ? "text-emerald-500" : "text-gray-400"}
-            ${step.completed ? "text-emerald-500" : "text-gray-400"}
+            className={`absolute top-0 text-center mt-16 w-32 text-xs font-semibold uppercase
+            ${step.highlighted ? "text-emerald-600" : "text-slate-400"}
+            ${step.next ? "text-emerald-500" : "text-slate-500"}
+            ${step.completed ? "text-emerald-600" : "text-slate-500"}
             `}
           >
             {step.description}
@@ -113,7 +113,7 @@ const Stepper = ({ steps, currentStep }) => {
         </div>
         <div
           className={`flex-auto border-t-2 transition duration-500 ease-in-out  ${
-            step.completed ? "border-emerald-400" : "border-gray-300 "
+            step.completed ? "border-emerald-400" : "border-slate-400 "
           }  `}
         ></div>
       </div>

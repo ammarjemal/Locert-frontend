@@ -10,24 +10,31 @@ import Layout from "./components/layout/Layout";
 import AdminLayout from "./components/Admin/layout/Layout";
 import { Fragment } from "react";
 import { useAuth } from "./store/auth-context";
-import AdminPage from "./pages/admin";
+import AdminLoginPage from "./pages/admin/login";
 import AdminArticlesPage from "./pages/admin/posts";
 import AdminResearchersPage from "./pages/admin/researchers";
-// import NotLoggedIn from "./UI/NotLoggedIn";
+import { useAdminAuth } from "./store/admin-context";
+import MyProfilePage from "./pages/my-profile";
 
 function App() {
-  const { isLoggedIn, currentUser } = useAuth();
+  const { isLoggedIn } = useAuth();
+  const { isAdminLoggedIn } = useAdminAuth();
   const ProtectedRoute = ({children}) => {
-    if(!isLoggedIn && currentUser?.userType === "researcher"){
+    if(!isLoggedIn){
       return <Redirect to="/login"/>
-    }else if(!isLoggedIn && currentUser?.userType === "admin"){
-        return <Redirect to="/admin-login"/>
+    }else{
+      return children;
+    }
+  }
+  const AdminProtectedRoute = ({children}) => {
+    console.log(isLoggedIn);
+    if(!isLoggedIn || !isAdminLoggedIn){
+        return <Redirect to="/admin/login"/>
     }else{
       return children;
     }
   }
 
-  // console.log(currentUser);
   return (
     <Fragment>
       <Switch>
@@ -37,9 +44,14 @@ function App() {
           </Layout>
         </Route>
         <Route path="/messages">
+          <ProtectedRoute>
+            <MessagesPage/>
+          </ProtectedRoute>
+        </Route>
+        <Route path="/profile">
           <Layout>
             <ProtectedRoute>
-              <MessagesPage/>
+              <MyProfilePage/>
             </ProtectedRoute>
           </Layout>
         </Route>
@@ -68,26 +80,22 @@ function App() {
         <Route path="/login">
           <LoginPage/>
         </Route>
-        <Route path="/admin" exact>
-          <AdminLayout>
-            <ProtectedRoute>
-              <AdminPage/>
-            </ProtectedRoute>
-          </AdminLayout>
+        <Route path="/admin/login" exact>
+          <AdminLoginPage/>
         </Route>
         <Route path="/admin/articles">
-          <AdminLayout>
-            <ProtectedRoute>
-              <AdminArticlesPage/>
-            </ProtectedRoute>
-          </AdminLayout>
+          <AdminProtectedRoute>
+            <AdminLayout>
+                <AdminArticlesPage/>
+            </AdminLayout>
+          </AdminProtectedRoute>
         </Route>
         <Route path="/admin/researchers">
-          <AdminLayout>
-            <ProtectedRoute>
+          <AdminProtectedRoute>
+            <AdminLayout>
               <AdminResearchersPage/>
-            </ProtectedRoute>
-          </AdminLayout>
+            </AdminLayout>
+          </AdminProtectedRoute>
         </Route>
       </Switch>
     </Fragment>

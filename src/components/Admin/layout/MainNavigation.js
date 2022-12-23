@@ -52,7 +52,7 @@ const MainNavigation = (props) => {
                                 group inline-flex items-center rounded-md text-base font-medium hover:text-opacity-100 focus:outline-none`}
                             >
                             <span>{isLoggedIn && <span className="flex items-center font-medium">
-                                <img src={(currentUser && currentUser.photoURL)} alt="" className={`ring-1 ring-slate-300 ${open && "ring-emerald-500"} hover:ring-emerald-500 h-8 w-8 rounded-full`}/>
+                                <img src={(currentUser && currentUser.photoURL)} alt="" className={`ring-1 ring-slate-300 ${open && "ring-emerald-500"} hover:ring-emerald-500 h-8 w-8 rounded-full object-cover`}/>
                             </span>}</span>
                         </Popover.Button>
                         <Transition
@@ -68,7 +68,7 @@ const MainNavigation = (props) => {
                             <div className="overflow-hidden rounded-lg shadow-lg">
                                 <div className="relative grid bg-white p-2">
                                     <div className="flex items-center mb-1 pb- border-b p-2">
-                                        <img src={(currentUser && currentUser.photoURL)} alt="" className="ring-1 ring-slate-300 h-6 w-6 rounded-full" />
+                                        <img src={(currentUser && currentUser.photoURL)} alt="" className="ring-1 ring-slate-300 h-6 w-6 rounded-full object-cover" />
                                         <span className="p-2 font-semibold">{(currentUser && currentUser.displayName) || <p>Account Name</p>}</span>
                                     </div>
                                     <Link

@@ -10,7 +10,7 @@ import { registerToFirebase } from '../../api/authApi';
 import { useAuth } from "../../store/auth-context";
 import UploadImage from './Multi Step Form/UploadImage';
 
-const btnPrevStyles = "w-auto text-gray-500 hover:text-gray-600 bg-slate-200 hover:bg-slate-300";
+const btnPrevStyles = "w-auto bg-slate-200";
 const btnNextSvgStyles = "w-6 h-6 group-enabled:group-hover:translate-x-1";
 const btnPrevSvgStyles = "w-6 h-6 group-enabled:group-hover:-translate-x-1";
 const femaleDefaultImage = "https://firebasestorage.googleapis.com/v0/b/react-project-dff24.appspot.com/o/profile%20images%2Fprofile-default.jpg?alt=media&token=be4a9154-d942-4e01-aca7-508f7c158faf";
@@ -144,13 +144,13 @@ export default function Signup(){
             userDefaultImage = femaleDefaultImage;
         }
         setPage(page + 1);
-        registerToFirebase({...formData, isAdmin: false, isBanned: false},{setError,setIsAuthenticating, setPage}, signup, page, userDefaultImage);
+        registerToFirebase({...formData, isAdmin: false, isBanned: false}, {setError,setIsAuthenticating, setPage}, signup, page, userDefaultImage);
     }
     return(
         <Fragment>
             {error && <Toast type='error' show={true} setState={setError} message={error}/>}
             <Stepper steps={steps} currentStep={page} />
-            <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
+            <form className="mt-8" onSubmit={handleSubmit}>
                 {componentList[page]}
             </form>
             {(page < 3) && <div className='w-full text-end mt-2'>

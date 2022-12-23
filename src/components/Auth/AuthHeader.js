@@ -1,5 +1,4 @@
-// import {Link} from 'react-router-dom';
-import logo from "../../assests/logo.svg"
+import logo from "../../assets/logo.svg"
 export default function Header({
     heading,
 }){
@@ -8,10 +7,11 @@ export default function Header({
             <div className="flex justify-center">
                 <img 
                     alt="Project Logo"
-                    className="w-24"
-                    src={logo}/>
+                    className="w-30 mb-5"
+                    src={logo}
+                />
             </div>
-            <h2 className="mt-2 text-center text-3xl font-extrabold text-gray-900">
+            <h2 className="mt-2 text-center text-2xl font-bold">
                 {heading}
             </h2>
         </div>

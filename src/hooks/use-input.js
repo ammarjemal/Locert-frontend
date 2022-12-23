@@ -12,7 +12,11 @@ const useInput = (validateInput) => {
     const inputIsInValid = !inputIsValid && inputIsTouched;
     
     const inputChangeHandler = (event) => {
-        setInputValue(event.target.value);
+        if(typeof(event) === "object"){ // for normal inputs
+            setInputValue(event.target.value);
+        }else if(typeof(event) === "string"){ // for treeselect
+            setInputValue(event);
+        }
     }
     const inputBlurHandler = () => {
         setInputIsTouched(true);

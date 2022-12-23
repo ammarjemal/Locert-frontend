@@ -1,25 +1,29 @@
 import React from 'react'
 import { Tabs } from 'antd';
 import Posts from '../../components/Admin/Posts/Posts';
-
+import { useState } from 'react';
 const AdminArticlesPage = () => {
+    const [allCount, setAllCount] = useState(0);
+    const [pendingCount, setPendingCount] = useState(0);
+    const [approvedCount, setApprovedCount] = useState(0);
+    const [declinedCount, setDeclinedCount] = useState(0);
     const labels = [
         {
-            label: `All`,
+            label: `All (${allCount})`,
             key: 1,
-            children: <Posts fetchType="ALL"/>,
+            children: <Posts setArticlesCount={setAllCount} fetchType="ALL"/>,
         },{
-            label: `Pending`,
+            label: `Pending (${pendingCount})`,
             key: 2,
-            children: <Posts fetchType="PENDING"/>, 
+            children: <Posts setArticlesCount={setPendingCount} fetchType="PENDING"/>, 
         },{
-            label: `Approved`,
+            label: `Approved (${approvedCount})`,
             key: 3,
-            children: <Posts fetchType="APPROVED"/>, 
+            children: <Posts setArticlesCount={setApprovedCount} fetchType="APPROVED"/>, 
         },{
-            label: `Declined`,
+            label: `Declined (${declinedCount})`,
             key: 4,
-            children: <Posts fetchType="DECLINED"/>, 
+            children: <Posts setArticlesCount={setDeclinedCount} fetchType="DECLINED"/>, 
         }
     ]
     return (

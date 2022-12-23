@@ -35,12 +35,13 @@ const NewPost = () => {
             uid: currentUser.uid,
             author: currentUser.displayName,
             photoURL: currentUser.photoURL,
-            date:  new Date().getTime(),
+            // date:  new Date().getTime(),
             articleText: article,
             // status is PENDING by default
             comments: [],
             likes: [],
         }
+        console.log(articleData);
         if(articleData){
             postArticle(articleData, {setError, setSuccess, setIsSubmitting}, resetArticle);
         }
@@ -52,7 +53,7 @@ const NewPost = () => {
             {isLoggedIn && <form onSubmit={submitHandler}>
                 <h1 className="text-center text-xl font-bold">Write a New Article</h1>
                 <textarea
-                    className={`${articleIsInValid && "border-red-500"} my-5 h-40 min-h-max outline-none focus:ring focus:ring-emerald-200 hover:ring-emerald-500 rounded-md py-2 px-3 w-full bg-slate-100`} placeholder="Write a new article"
+                    className={`${articleIsInValid && "border-red-500"} my-5 h-40 min-h-max outline-none focus:ring focus:ring-slate-400 hover:ring-slate-500 rounded-md py-2 px-3 w-full bg-slate-100`} placeholder="Write a new article"
                     value={article}
                     onChange={articleChangeHandler} 
                     onBlur={articleBlurHandler}

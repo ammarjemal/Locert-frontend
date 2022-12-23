@@ -77,31 +77,31 @@ const Search = (props) => {
     user && handleSelect(user);
   }, [handleSelect, user])
   return (
-    <div className="search w-full relative p-2">
-        <div className="searchForm">
-            <Input
-                className="w-full bg-[#243449] text-slate-100 rounded-md border-0"
-                type="text"
-                variant='search'
-                placeholder="Find a user"
-                onKeyDown={handleKey}
-                onChange={(e) => {setUsername(e.target.value)}}
-                value={username}
-            />
-        </div>
-        {error && <span>{error}</span>}
-        {users && username && (
-            <div className="user-list z-10 flex flex-col w-full left-0 absolute top-full bg-[#243449]">
-                {users.map((u) => (
-                    <div key={u.id} className="user flex items-center py-2 pl-2 border-b border-slate-500 hover:bg-[#192433] cursor-pointer" onClick={() => handleSelect(u)}>
-                        <img className="w-8 h-8 rounded-full" src={u.photoURL} alt="User profile pic" />
-                        <div className="userChatInfo ml-2">
-                            <span>{u.displayName}</span>
-                        </div>
-                    </div>
-                ))}
+    <div className="search w-full relative px-2">
+      <div className="searchForm">
+        <Input
+          className="w-full text-slate-600 rounded-md"
+          type="text"
+          variant='search'
+          placeholder="Find a user"
+          onKeyDown={handleKey}
+          onChange={(e) => {setUsername(e.target.value)}}
+          value={username}
+        />
+      </div>
+      {error && <span>{error}</span>}
+      {users && username && (
+        <div className="user-list z-10 flex flex-col w-full left-0 absolute top-full bg-[#f5f5f5] bg-opacity-90">
+          {users.map((u) => (
+            <div key={u.id} className="user flex items-center text-slate-600 py-2 pl-2 border-b border-gray-300 hover:bg-[#f7f7f7] cursor-pointer" onClick={() => handleSelect(u)}>
+              <img className="w-8 h-8 rounded-full" src={u.photoURL} alt="User profile pic" />
+              <div className="userChatInfo ml-2">
+                  <span>{u.displayName}</span>
+              </div>
             </div>
-        )}
+          ))}
+        </div>
+      )}
     </div>
   );
 };

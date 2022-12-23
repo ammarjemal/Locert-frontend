@@ -1,7 +1,7 @@
 import { Fragment, useState, useEffect } from "react"
 import PostItem from "./PostItem";
 import Comments from "../Comments/Comments";
-import Toast from "../UI/Toast";
+// import Toast from "../UI/Toast";
 import Spinner from "../UI/Spinner";
 import { useAuth } from "../../store/auth-context";
 import { getArticles } from "../../api/articleApi";
@@ -55,7 +55,7 @@ const Posts = (props) => {
                     ))
                 }
             </div>
-            {error && <Toast show={true} setState={setError} message={error}/>}
+            {/* {error && <Toast show={true} setState={setError} message={error}/>} */}
         </Fragment>
     )
 

@@ -6,28 +6,32 @@ import Button from "../../UI/Button";
 import { ArrowLeftShort, ArrowRightShort } from 'react-bootstrap-icons';
 import Spinner from "../../UI/Spinner";
 import Input from "../../UI/Input";
+import { generatePassword } from "../../../extras/extra-functions";
 
 const iconClasses = "text-gray-500";
 
 const Credentials = (props) => {
-    const [passwordVisible,setPasswordVisible]=useState(false);
-    const [confirmPasswordVisible,setConfirmPasswordVisible]=useState(false);
+    const generatePasswordHandler = () => {
+        const newPassword = generatePassword();
+        passwordChangeHandler(newPassword);
+        confirmPasswordChangeHandler(newPassword);
+    }
+    const [passwordVisible,setPasswordVisible] = useState(false);
+    const [confirmPasswordVisible,setConfirmPasswordVisible] = useState(false);
     const {
         value: email,
         isValid: emailIsValid,
         isInvalid: emailIsInValid,
         inputChangeHandler: emailChangeHandler,
         inputBlurHandler: emailBlurHandler,
-        // reset: resetEmail
     } = props.inputs.emailInput;
 
-    const {
+    let {
         value: password,
         isValid: passwordIsValid,
         isInvalid: passwordIsInValid,
         inputChangeHandler: passwordChangeHandler,
         inputBlurHandler: passwordBlurHandler,
-        // reset: resetPassword
     } = props.inputs.passwordInput;
 
     const {
@@ -36,11 +40,9 @@ const Credentials = (props) => {
         isInvalid: confirmPasswordIsInValid,
         inputChangeHandler: confirmPasswordChangeHandler,
         inputBlurHandler: confirmPasswordBlurHandler,
-        // reset: resetConfirmPassword
     } = props.inputs.confirmPasswordInput;
 
     const formIsValid = emailIsValid && passwordIsValid && confirmPasswordIsValid && (password === confirmPassword);
-    console.log(formIsValid);
     return (
         <Fragment>
             <Input
@@ -63,6 +65,7 @@ const Credentials = (props) => {
                 placeholder="Password"
                 variant="password"
             >
+                <button onClick={generatePasswordHandler} type="button" className="text-sm mx-2">Generate</button>
                 {!passwordVisible ? <button type="button" className={iconClasses} onClick={() => setPasswordVisible(true)}><Eye className="h-5 w-5"/></button> : <button type="button" className={iconClasses} onClick={() => setPasswordVisible(false)}><EyeSlash className="h-5 w-5"/></button>}
             </Input>
             <Input

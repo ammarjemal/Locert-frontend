@@ -1,6 +1,6 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
-import NotLoggedInImg from "../assests/NotLoggedIn.svg";
+import NotLoggedInImg from "../assets/NotLoggedIn.svg";
 
 export default function NotLoggedIn() {
   return (

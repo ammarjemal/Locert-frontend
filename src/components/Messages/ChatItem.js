@@ -6,9 +6,11 @@ const ChatItem = (props) => {
 
     const ref = useRef();
     const { currentUser } = useAuth();
-    // const { data } = useContext(ChatContext);
     let hours = new Date(message.date.toDate()).getHours();
-    const minutes = new Date(message.date.toDate()).getMinutes();
+    let minutes = new Date(message.date.toDate()).getMinutes();
+    if(minutes < 10){
+        minutes = '0' + minutes;
+    }
     const AMPM = hours >= 12 ? 'PM' : 'AM';
     hours = (hours % 12) || 12;
     const date = hours + ':' + minutes+' '+AMPM;

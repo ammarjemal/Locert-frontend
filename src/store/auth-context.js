@@ -1,7 +1,8 @@
 import React, { useContext, useState, useEffect } from "react";
 import auth from "../firebase";
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from "firebase/auth";
-
+import { checkIsBanned } from "../api/userApi";
+import { useHistory } from "react-router-dom";
 const AuthContext = React.createContext();
 
 export function useAuth() {
@@ -9,17 +10,21 @@ export function useAuth() {
 }
 
 export function AuthContextProvider(props) {
-  const [currentUser, setCurrentUser] = useState();
-  const [loading, setLoading] = useState(true);
-  const [userType, setUserType] = useState();
-  function signup(userData, userType){
-    setUserType(userType)
+  const [currentUser, setCurrentUser] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const history = useHistory();
+
+  function signup(userData){
     const status = createUserWithEmailAndPassword(auth, userData.email, userData.password);
     return status;
   }
 
-  function login(email, password, userType) {
-    setUserType(userType)
+  async function login(email, password, setError) {
+    const isBanned = await checkIsBanned(email);
+    if(isBanned){
+      setError("Your account has been banned");
+      return false;
+    }
     return signInWithEmailAndPassword(auth, email, password);
   }
 
@@ -38,16 +43,26 @@ export function AuthContextProvider(props) {
   function updatePassword(password) {
     return currentUser.updatePassword(password);
   }
-  // getUser
+  
   useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged(user => {
-      console.log(user);
+    const unsubscribe = auth.onAuthStateChanged(async user => {
+      if(user === null){
+        setIsLoading(false);
+        return;
+      }
+      const isBanned = await checkIsBanned(user.email);
+      if(isBanned){
+        //Log user out
+        alert("Your account has been banned");
+        logout();
+        history.push('/login');
+      }
       setCurrentUser(user);
-      setLoading(false);
+      setIsLoading(false);
     });
 
     return unsubscribe;
-  }, [userType])
+  }, [history])
   const contextValue = {
     currentUser,
     isLoggedIn: !!currentUser,
@@ -60,7 +75,7 @@ export function AuthContextProvider(props) {
   }
   return (
     <AuthContext.Provider value={contextValue}>
-      {!loading && props.children}
+      {!isLoading && props.children}
     </AuthContext.Provider>
   );
 };
