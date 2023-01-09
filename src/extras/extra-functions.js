@@ -9,7 +9,7 @@ export function ObjectLength(object) {
 };
 export function generatePassword() {
     var chars = "0123456789abcdefghijklmnopqrstuvwxyz!@#$%^&*()-+=/<>?{}|~.,:;ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-    var passwordLength = 15;
+    var passwordLength = 20;
     var password = "";
     for (var i = 0; i <= passwordLength; i++) {
     var randomNumber = Math.floor(Math.random() * chars.length);
@@ -17,3 +17,7 @@ export function generatePassword() {
     }
     return password;
 };
+
+export const capitalizeFirst = (str) => {
+    return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+}

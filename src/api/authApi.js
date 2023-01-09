@@ -2,6 +2,7 @@ import auth from "../firebase";
 import { updateProfile } from "firebase/auth";
 import { db } from "../firebase";
 import { doc, setDoc } from "firebase/firestore";
+
 const serverLink = 'http://localhost:8001';
 
 export function registerToFirebase (userData, stateMethods, signup, page, userDefaultImage) {
@@ -13,7 +14,7 @@ export function registerToFirebase (userData, stateMethods, signup, page, userDe
         stateMethods.setIsAuthenticating(false);
         console.log(userData.displayName);
         updateProfile(auth.currentUser, {
-            displayName: userData.displayName, photoURL: userDefaultImage
+            displayName: userData.title + ' ' + userData.fullName, photoURL: userDefaultImage
         }).then(() => {
             stateMethods.setPage(page + 1);
         }).catch((error) => {
@@ -36,18 +37,19 @@ export function registerToFirebase (userData, stateMethods, signup, page, userDe
                 stateMethods.setError("Email is invalid.")
                 break;
             default:
-                stateMethods.setError(err.message);
+                stateMethods.setError(err.message || "Sorry, something went wrong");
                 break;
         }
       });
 }
 /// save user data on our database
-export function insertUserData(userData,stateMethods) {
+export function insertUserData(userData, stateMethods) {
     stateMethods.setIsLoading(true);
     fetch(`${serverLink}/api/v1/researchers`, {
         method: 'POST',
         body: JSON.stringify({
             displayName: userData.displayName,
+            fullName: userData.fullName,
             email: userData.email,
             bio: userData.bio,
             profession: userData.profession,
@@ -87,7 +89,7 @@ export function insertUserData(userData,stateMethods) {
     .catch((err) => {
         deleteFromFirebase(userData.email);
         stateMethods.setIsLoading(false);
-        stateMethods.setError(err.message);
+        stateMethods.setError("Sorry, something went wrong");;
     });
 }
 
@@ -138,7 +140,7 @@ export function loginUser(userData, stateMethods, login, history) {
     })
     .then((data) => { // if successfull
         if(data){
-            history.push('/');
+            history.push('/home');
         }
         stateMethods.setIsAuthenticating(false);
     })
@@ -155,12 +157,13 @@ export function loginUser(userData, stateMethods, login, history) {
                 stateMethods.setError("The user account has been disabled by an administrator.")
                 break;
             default:
-                stateMethods.setError(err.message);
+                stateMethods.setError("Sorry, something went wrong");
                 break;
         }
     });
 }
 export function updateProfilePicture(userData, stateMethods, url, history) {
+    console.log(userData);
     updateProfile(auth.currentUser, {
         photoURL: url
     }).then(() => {
@@ -168,8 +171,8 @@ export function updateProfilePicture(userData, stateMethods, url, history) {
     }).then(() => {
         //create empty user chats on firestore
         setDoc(doc(db, "userChats", auth.currentUser.uid), {});
-        history.push('/');
+        history.push('/home');
     }).catch((error) => {
-        stateMethods.setError(error.message);
+        stateMethods.setError("Sorry, something went wrong");
     });
 }

@@ -1,12 +1,12 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { useLocation } from 'react-router-dom';
 import Messages from '../components/Messages/Messages'
 
 const MessagesPage = () => {
-  console.log(useLocation());
-  const { state } = useLocation();
+  const location = useLocation();
+  const [user, setUser] = useState(location.state?.user ? location.state?.user : null);
   return (
-    !!state?.user ? <Messages user={state?.user}/> : <Messages/>
+    user ? <Messages user={user} setUser={setUser}/> : <Messages/>
   )
 }
 export default MessagesPage;

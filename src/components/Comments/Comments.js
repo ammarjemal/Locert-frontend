@@ -14,10 +14,12 @@ const Comments = (props) => {
     const [error, setError] = useState(null);
     const commentRef = useRef();
     const { currentUser, isLoggedIn } = useAuth();
+    const { setArticles, articles } = props;
     useEffect(() => {
         async function fetchData() {
             setIsLoading(true);
             const loadedComments = await getComments(currentUser, props.postId, {setError, setIsLoading});
+            console.log(loadedComments);
             setComments(loadedComments);
         }
         fetchData();
@@ -35,8 +37,6 @@ const Comments = (props) => {
         const commentData = {
             commentId: uuidv4(),
             uid: currentUser.uid,
-            author: currentUser.displayName,
-            photoURL: currentUser.photoURL,
             date:  new Date().getTime(),
             commentText: commentRef.current.value,
             likes: [],
@@ -47,12 +47,22 @@ const Comments = (props) => {
         const commentDataUpdated = {
             ...commentData,
             likesCount: 0,
+            displayName: currentUser.displayName,
+            photoURL: currentUser.photoURL,
             id: commentData.commentId || Math.random(),
         }
         setComments([
             commentDataUpdated,
             ...comments,
         ])
+        // update the commentCount in the articles
+        setArticles(articles.map(article => {
+            if (article.id === props.postId) {
+              return { ...article, commentsCount: props.commentCount + 1 };
+            } else {
+              return article;
+            }
+        }));
         commentRef.current.value = '';
     }
     const modalBottom =
@@ -63,19 +73,21 @@ const Comments = (props) => {
         </form>
     return (
         <Fragment>
-            {error && <Toast type='error' show={true} setState={setError} message={error}/>}
-            <Modal headerIsShown={true} isShown={props.isShown} hideModal={props.hideModal} modalTitle={`Comments (${props.commentCount})`} modalBottom={modalBottom}>
+            {/* {error && <Toast type='error' show={true} setState={setError} message={error}/>} */}
+            <Modal headerIsShown={true} modalHeight="h-[85%] sm:h-[94%]" isShown={props.isShown} hideModal={props.hideModal} modalTitle={`Comments (${props.commentCount})`} modalBottom={isLoggedIn && modalBottom}>
                 <div className={`comments-wrapper p-3 flex flex-col items-center ${(!isLoading && comments.length) ? 'justify-start' : 'justify-center'} min-h-full relative text-zinc-700 ml-0`}>
                     {isLoading && <Spinner type='main'/>}
-                    {(!isLoading && !comments.length) && <p className="font-semibold text-sm w-full text-center">No comments found</p>}
+                    {(error && !comments.length && !isLoading) && <p className="text-center text-sm font-semibold absolute left-0 right-0">{error}</p>}
+                    {(!error && !isLoading && !comments.length) && <p className="font-semibold text-sm w-full text-center">No comments found</p>}
                     {
                         comments.map(comment => (
                             <CommentItem
                                 key={comment.id}
                                 id={comment.id}
+                                index={comment.index}
                                 text={comment.commentText}
                                 likesCount={comment.likesCount}
-                                author={comment.author}
+                                displayName={comment.displayName}
                                 photoURL={comment.photoURL}
                                 date={comment.date}
                                 liked={comment.liked}

@@ -33,27 +33,22 @@ const NewPost = () => {
         }
         const articleData = {
             uid: currentUser.uid,
-            author: currentUser.displayName,
-            photoURL: currentUser.photoURL,
-            // date:  new Date().getTime(),
             articleText: article,
-            // status is PENDING by default
             comments: [],
             likes: [],
         }
-        console.log(articleData);
         if(articleData){
             postArticle(articleData, {setError, setSuccess, setIsSubmitting}, resetArticle);
         }
     }
     return (
-        <div className="col-start-2 col-span-10 w-full mt-10">
+        <div className="col-start-2 col-span-10 sm:w-full w-[96%] mt-24">
             {error && <Toast type='error' show={true} setState={setError} message={error}/>}
             {success && <Toast type='success' show={true} setState={setSuccess} message={success}/>}
             {isLoggedIn && <form onSubmit={submitHandler}>
-                <h1 className="text-center text-xl font-bold">Write a New Article</h1>
+                <h1 className="text-center text-3xl">Write a New Article</h1>
                 <textarea
-                    className={`${articleIsInValid && "border-red-500"} my-5 h-40 min-h-max outline-none focus:ring focus:ring-slate-400 hover:ring-slate-500 rounded-md py-2 px-3 w-full bg-slate-100`} placeholder="Write a new article"
+                    className={`${articleIsInValid && "border-red-500"} border border-gray-400 my-5 h-40 min-h-max outline-none focus:ring disabled:cursor-not-allowed focus:border-emerald-500 focus:ring-emerald-500/20 rounded-md py-2 px-3 w-full bg-transparent`} placeholder="Write a new article"
                     value={article}
                     onChange={articleChangeHandler} 
                     onBlur={articleBlurHandler}

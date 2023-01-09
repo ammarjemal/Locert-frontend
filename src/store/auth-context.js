@@ -3,6 +3,9 @@ import auth from "../firebase";
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from "firebase/auth";
 import { checkIsBanned } from "../api/userApi";
 import { useHistory } from "react-router-dom";
+import logo from "../assets/logo-loading.svg";
+import { useUserProfile } from "./user-profile-context";
+import { Confirm } from "../components/UI/Confirm";
 const AuthContext = React.createContext();
 
 export function useAuth() {
@@ -13,6 +16,8 @@ export function AuthContextProvider(props) {
   const [currentUser, setCurrentUser] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const history = useHistory();
+  const { updateUserProfile } = useUserProfile();    
+  const [isConfirmShown, setIsConfirmShown] = useState(false);
 
   function signup(userData){
     const status = createUserWithEmailAndPassword(auth, userData.email, userData.password);
@@ -43,7 +48,10 @@ export function AuthContextProvider(props) {
   function updatePassword(password) {
     return currentUser.updatePassword(password);
   }
-  
+  const okClickHandler = () => {
+    history.push('/login');
+    setIsConfirmShown(false);
+  }
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged(async user => {
       if(user === null){
@@ -52,17 +60,18 @@ export function AuthContextProvider(props) {
       }
       const isBanned = await checkIsBanned(user.email);
       if(isBanned){
-        //Log user out
-        alert("Your account has been banned");
         logout();
-        history.push('/login');
+        setIsConfirmShown(true);
+        return;
       }
+      console.log(user);
+      updateUserProfile({photoURL: user.photoURL, displayName: user.displayName});
       setCurrentUser(user);
       setIsLoading(false);
     });
 
     return unsubscribe;
-  }, [history])
+  }, [history, currentUser, updateUserProfile]);
   const contextValue = {
     currentUser,
     isLoggedIn: !!currentUser,
@@ -75,7 +84,12 @@ export function AuthContextProvider(props) {
   }
   return (
     <AuthContext.Provider value={contextValue}>
+      {isConfirmShown && <Confirm confirmButtonText="Ok" confirmTitle="Account Banned" onClick={okClickHandler} cancelButtonHidden={true}>Your account has been banned</Confirm>}
       {!isLoading && props.children}
+      {isLoading &&
+      <div className="absolute w-full h-full flex flex-col items-center justify-center">
+        <img src={logo} alt='Logo' className="opacity-1/2 w-36 h-36 animate-pulse"/>
+      </div>}
     </AuthContext.Provider>
   );
 };

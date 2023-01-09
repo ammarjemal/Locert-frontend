@@ -9,7 +9,7 @@ import Spinner from '../UI/Spinner';
 import { useAuth } from '../../store/auth-context';
 import Input from '../UI/Input';
 const iconClasses = "text-gray-500";
-const inputClasses = `flex items-center justify-between my-5 rounded-xl appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-emerald-400 focus:border-emerald-400 focus:z-10 sm:text-sm`;
+// const inputClasses = `flex items-center justify-between my-5 rounded-xl appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-emerald-400 focus:border-emerald-400 focus:z-10 sm:text-sm`;
 
 export default function Login(){
     const { login } = useAuth();

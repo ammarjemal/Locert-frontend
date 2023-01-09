@@ -2,29 +2,25 @@ import React, {  useState, useEffect, useCallback } from "react";
 import {
   setDoc,
   doc,
-  updateDoc,
-  serverTimestamp,
+  // updateDoc,
+  // serverTimestamp,
   getDoc,
 } from "firebase/firestore";
 import { db } from '../../firebase'
 import { useAuth } from "../../store/auth-context";
 import Input from "../UI/Input";
 import { searchUsers } from "../../api/userApi";
-// import { AuthContext } from "../context/AuthContext";
 const Search = (props) => {
   const [username, setUsername] = useState("");
   const [users, setUsers] = useState(null);
   const [error, setError] = useState(null);
-
   const { currentUser } = useAuth();
   const { user, setUserSelected, selectUserHandler } = props;
-  const handleSearch = async () => {
-    const userData = await searchUsers(username, {setError, setUsername});
+  
+  const handleKey = async (e) => {
+    console.log(e.target.value);
+    const userData = await searchUsers(e.target.value, {setError, setUsername});
     setUsers(userData);
-  };
-
-  const handleKey = (e) => {
-    handleSearch();
   };
 
   const handleSelect = useCallback(async (user) => {
@@ -41,25 +37,6 @@ const Search = (props) => {
           console.log(res);
         //create a chat in chats collection
         await setDoc(doc(db, "chats", combinedId), { messages: [] });
-
-        //create user chats
-        await updateDoc(doc(db, "userChats", currentUser.uid), {
-          [combinedId + ".userInfo"]: {
-            uid: user.uid,
-            displayName: user.displayName,
-            photoURL: user.photoURL,
-          },
-          [combinedId + ".date"]: serverTimestamp(),
-        });
-        await updateDoc(doc(db, "userChats", user.uid), {
-          [combinedId + ".userInfo"]: {
-            uid: currentUser.uid,
-            displayName: currentUser.displayName || "Display name",
-            photoURL: currentUser.photoURL,
-          },
-          [combinedId + ".date"]: serverTimestamp(),
-        });
-        console.log(user.uid);
       }
       selectUserHandler(user);
       setUserSelected(true);
@@ -80,21 +57,20 @@ const Search = (props) => {
     <div className="search w-full relative px-2">
       <div className="searchForm">
         <Input
-          className="w-full text-slate-600 rounded-md"
+          className="w-full text-slate-600 rounded-md border-gray-400 text-sm"
           type="text"
           variant='search'
           placeholder="Find a user"
-          onKeyDown={handleKey}
-          onChange={(e) => {setUsername(e.target.value)}}
+          onChange={(e) => {handleKey(e); setUsername(e.target.value)}}
           value={username}
         />
       </div>
       {error && <span>{error}</span>}
       {users && username && (
-        <div className="user-list z-10 flex flex-col w-full left-0 absolute top-full bg-[#f5f5f5] bg-opacity-90">
+        <div className="user-list z-10 flex flex-col w-full left-0 bg-[#f5f5f5]/90 absolute top-full shadow-md rounded-md">
           {users.map((u) => (
             <div key={u.id} className="user flex items-center text-slate-600 py-2 pl-2 border-b border-gray-300 hover:bg-[#f7f7f7] cursor-pointer" onClick={() => handleSelect(u)}>
-              <img className="w-8 h-8 rounded-full" src={u.photoURL} alt="User profile pic" />
+              <img className="w-8 h-8 rounded-full object-cover" src={u.photoURL} alt="User profile pic" />
               <div className="userChatInfo ml-2">
                   <span>{u.displayName}</span>
               </div>

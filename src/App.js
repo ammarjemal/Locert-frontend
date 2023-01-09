@@ -5,16 +5,19 @@ import LoginPage from "./pages/login";
 import MessagesPage from "./pages/messages";
 import AlertPage from "./pages/alert";
 import NewArticlePage from "./pages/new-article";
+import MyAccountPage from "./pages/my-account";
+import NewDataPage from "./pages/new-data";
 import UserProfilePage from "./pages/user-profile";
 import Layout from "./components/layout/Layout";
 import AdminLayout from "./components/Admin/layout/Layout";
-import { Fragment } from "react";
-import { useAuth } from "./store/auth-context";
 import AdminLoginPage from "./pages/admin/login";
 import AdminArticlesPage from "./pages/admin/posts";
 import AdminResearchersPage from "./pages/admin/researchers";
+import PredictionsPage from "./pages/admin/predictions";
+import { Fragment } from "react";
+import { useAuth } from "./store/auth-context";
 import { useAdminAuth } from "./store/admin-context";
-import MyProfilePage from "./pages/my-profile";
+import Index from "./pages";
 
 function App() {
   const { isLoggedIn } = useAuth();
@@ -27,7 +30,6 @@ function App() {
     }
   }
   const AdminProtectedRoute = ({children}) => {
-    console.log(isLoggedIn);
     if(!isLoggedIn || !isAdminLoggedIn){
         return <Redirect to="/admin/login"/>
     }else{
@@ -39,6 +41,11 @@ function App() {
     <Fragment>
       <Switch>
         <Route path="/" exact>
+          <Layout linksInvisible={true}>
+            <Index/>
+          </Layout>
+        </Route>
+        <Route path="/home" exact>
           <Layout>
             <HomePage/>
           </Layout>
@@ -51,7 +58,7 @@ function App() {
         <Route path="/profile">
           <Layout>
             <ProtectedRoute>
-              <MyProfilePage/>
+              <MyAccountPage/>
             </ProtectedRoute>
           </Layout>
         </Route>
@@ -71,6 +78,13 @@ function App() {
           <Layout>
             <ProtectedRoute>
               <NewArticlePage/>
+            </ProtectedRoute>
+          </Layout>
+        </Route>
+        <Route path="/new-data">
+          <Layout>
+            <ProtectedRoute>
+              <NewDataPage/>
             </ProtectedRoute>
           </Layout>
         </Route>
@@ -94,6 +108,13 @@ function App() {
           <AdminProtectedRoute>
             <AdminLayout>
               <AdminResearchersPage/>
+            </AdminLayout>
+          </AdminProtectedRoute>
+        </Route>
+        <Route path="/admin/predictions">
+          <AdminProtectedRoute>
+            <AdminLayout>
+              <PredictionsPage/>
             </AdminLayout>
           </AdminProtectedRoute>
         </Route>

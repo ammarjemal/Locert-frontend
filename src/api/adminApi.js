@@ -1,18 +1,10 @@
 const serverLink = 'http://localhost:8001';
 
-export const getArticles = async (fetchType, {setIsLoading, setError}) => {
+export const getArticles = async ({setIsLoading, setError}) => {
     setIsLoading(true);
     let loadedArticles = [];
-    let url = '';
-    if(fetchType === "ALL"){
-        url = `${serverLink}/api/v1/articles`;
-    } else if(fetchType === "PENDING" || fetchType === "APPROVED" || fetchType === "DECLINED"){
-        url = `${serverLink}/api/v1/articles?status=${fetchType}`;
-    } else {
-        return;
-    }
     try{
-        const response = await fetch(url, {
+        const response = await fetch(`${serverLink}/api/v1/articles`, {
             method: 'GET',
         });
         const data = await response.json();
@@ -21,20 +13,25 @@ export const getArticles = async (fetchType, {setIsLoading, setError}) => {
         }
         const articles = data["data"]["articles"];
         for(const key in articles){
-            loadedArticles.push({
-                id: articles[key]._id,
-                ...articles[key]
-            });
+            if(articles[key].researcherData[0]){
+                loadedArticles.push({
+                    id: articles[key]._id,
+                    displayName: articles[key].researcherData[0].displayName,
+                    photoURL: articles[key].researcherData[0].photoURL,
+                    ...articles[key]
+                });
+            }
         }
         setIsLoading(false);
         setError(null);
     } catch(error){
         setIsLoading(false);
-        setError(error.message);
+        setError("Sorry, couldn't get articles");
     }
     return loadedArticles;
 }
 
+// updates article status to APPROVED or DECLINED based on the admin's action
 export const changeArticleStatus = async (articleId, status, { setError, setIsLoading }) => {
     try{
         const response = await fetch(`${serverLink}/api/v1/admin/change-article-status/${articleId}`, {
@@ -53,38 +50,24 @@ export const changeArticleStatus = async (articleId, status, { setError, setIsLo
         }
     } catch(error){
         setIsLoading(false);
-        setError(error.message || "Something went wrong");
+        setError("Sorry, something went wrong");
         return false;
     }
     return true;
 }
 
-export const getResearchers = async (fetchType, { setError, setIsLoading }) => {
+export const getResearchers = async ({ setError, setIsLoading }) => {
     setIsLoading(true);
     let loadedResearchers = [];
-    let url = '';
-    if(fetchType === "ALL"){
-        url = `${serverLink}/api/v1/admin/get-researchers`;
-    } else if(fetchType === "BASIC"){
-        url = `${serverLink}/api/v1/admin/get-researchers?isAdmin=false`;
-    } else if(fetchType === "ADMIN"){
-        url = `${serverLink}/api/v1/admin/get-researchers?isAdmin=true`;
-    } else if(fetchType === "BANNED"){
-        url = `${serverLink}/api/v1/admin/get-researchers?isBanned=true`;
-    }else {
-        return loadedResearchers;
-    }
     try{
-        const response = await fetch(url, {
+        const response = await fetch(`${serverLink}/api/v1/admin/get-researchers`, {
             method: 'GET',
         });
-        console.log(response);
         const data = await response.json();
         if (!response.ok) {
             throw new Error(data.message || 'Could not get researchers.');
         }
         const researchers = data["data"]["researchers"];
-        console.log(researchers);
         for(const key in researchers){
             loadedResearchers.push({
                 id: researchers[key]._id,
@@ -95,7 +78,7 @@ export const getResearchers = async (fetchType, { setError, setIsLoading }) => {
         setError(null);
     } catch(error){
         setIsLoading(false);
-        setError(error.message);
+        setError("Sorry, couldn't get researchers");
     }
     return loadedResearchers;
 }
@@ -117,13 +100,12 @@ export const changeUserIsBannedStatus = async (id, isBanned, { setError, setIsLo
         }
     } catch(error){
         setIsLoading(false);
-        setError(error.message || "Something went wrong");
+        setError("Sorry, something went wrong");
         return false;
     }
     return true;
 }
 export const changeUserIsAdminStatus = async (id, isAdmin, { setError, setIsLoading2: setIsLoading }) => {
-    // console.log(id, isBanned); return;
     try{
         const response = await fetch(`${serverLink}/api/v1/admin/change-researcher-status/${id}`, {
             method: 'PATCH',
@@ -141,7 +123,7 @@ export const changeUserIsAdminStatus = async (id, isAdmin, { setError, setIsLoad
         }
     } catch(error){
         setIsLoading(false);
-        setError(error.message || "Something went wrong");
+        setError("Sorry, something went wrong");
         return false;
     }
     return true;
@@ -170,8 +152,6 @@ export const login = async (uid, password, { setError, setIsLoading }, adminLogi
             setError("Incorrect password");
         }else if(data.status === "no-privilege"){
             setError("You don't have administrator privilege");
-        }else if(data.status === "fail"){
-            setError("Incorrect password");
         }else if(data.status === "not-found"){
             setError("Admin account not found");
         }
@@ -179,6 +159,36 @@ export const login = async (uid, password, { setError, setIsLoading }, adminLogi
     } catch(error){
         setIsLoading(false);
         setError(error.message || "Something went wrong");
+        return false;
+    }
+    return true;
+}
+
+export const updatePassword = async (password, uid, { setError, setIsLoading, setSuccess }) => {
+    try{
+        const response = await fetch(`${serverLink}/api/v1/admin/update-password/${uid}`, {
+            method: 'PATCH',
+            body: JSON.stringify({
+                password
+            }),
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+        const data = await response.json();
+        setIsLoading(false);
+        if(data.status === "not-found"){
+            setError("Admin account not found");
+            return;
+        }
+        if (!response.ok) {
+            throw new Error(data.message || 'Could not update password.');
+        }
+        setSuccess("Password updated successfully");
+    } catch(error){
+        setSuccess(null);
+        setIsLoading(false);
+        setError("Sorry, something went wrong");
         return false;
     }
     return true;

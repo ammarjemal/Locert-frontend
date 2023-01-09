@@ -22,8 +22,7 @@ export default function Signup(){
     const [error, setError]=useState(null);
     const [page, setPage] = useState(0);
     // Step1
-    const firstNameInput = useInput(value => value.trim() !== '');
-    const lastNameInput = useInput(value => value.trim() !== '');
+    const fullNameInput = useInput(value => value.trim() !== '');
     const genderInput = useInput(value => value.trim() !== '');
     const titleInput = useInput(value => value.trim() !== '');
     // Step2
@@ -36,6 +35,7 @@ export default function Signup(){
     const passwordInput = useInput(value => value.trim() !== '' && value.length >= 6);
     const confirmPasswordInput = useInput(value => value.trim() !== '' && value.length >= 6);
     const [formData, setFormData] = useState({
+        fullName: "",
         displayName: "",
         gender: "",
         title: "",
@@ -68,8 +68,7 @@ export default function Signup(){
             }
             inputs = {
                 {
-                    firstNameInput: firstNameInput,
-                    lastNameInput: lastNameInput,
+                    fullNameInput: fullNameInput,
                     genderInput: genderInput,
                     titleInput: titleInput,
                 }
@@ -137,13 +136,12 @@ export default function Signup(){
     const handleSubmit=(e)=>{
         e.preventDefault();
         let userDefaultImage;
-        console.log(formData.gender);
         if(formData.gender === "Male"){
             userDefaultImage = maleDefaultImage;
         }else {
             userDefaultImage = femaleDefaultImage;
         }
-        setPage(page + 1);
+        console.log(formData);
         registerToFirebase({...formData, isAdmin: false, isBanned: false}, {setError,setIsAuthenticating, setPage}, signup, page, userDefaultImage);
     }
     return(

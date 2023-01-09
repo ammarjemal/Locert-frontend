@@ -18,7 +18,7 @@ const ChatItem = (props) => {
       ref.current?.scrollIntoView({ behavior: "smooth" });
     }, [message]);
     return (
-        <div ref={ref} className={`message-item flex mt-2 w-fit py-1 px-2 rounded-xl text-sm ${message.senderId === currentUser.uid ? 'owner text-white rounded-br-none bg-rose-500 self-end' : 'reciever rounded-bl-none bg-[#243449] self-start'}`}>
+        <div ref={ref} className={`message-item flex mt-2 w-fit py-1 px-2 rounded-xl text-sm ${message.senderId === currentUser.uid ? 'owner text-white rounded-br-none bg-rose-500 self-end' : 'reciever rounded-bl-none bg-[#243449] bg-opacity-80 self-start'}`}>
             <span className="mb-1">{message.text}</span>
             {message.img && <img src={message.img} alt="" />}
             <span className="text-xs ml-2 self-end">{date}</span>

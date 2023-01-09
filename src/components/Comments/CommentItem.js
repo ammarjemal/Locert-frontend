@@ -48,7 +48,7 @@ const CommentItem = (props) => {
                     <img src={props.photoURL || userProfile} alt="User profile" className="w-8 h-8 object-cover rounded-full"/>
                     <div className="flex flex-col ml-2">
                         <span className="font-semibold">
-                            {props.author}
+                            {props.displayName}
                         </span>
                         <span className="text-xs">
                             {date.getDate()} {month[date.getMonth()]} {date.getFullYear()}

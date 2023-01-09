@@ -6,8 +6,8 @@ import userProfilePic from "../../assets/user-profile.png";
 const Layout = (props) => {
     return (
         <Fragment>
-            <MainNavigation logo={logo} userProfilePic={userProfilePic}/>
-            <main className="overlow-x-auto">
+            <MainNavigation linksInvisible={props.linksInvisible} logo={logo} userProfilePic={userProfilePic}/>
+            <main className="overlow-x-auto pb-5 relative top-[50px]">
                 {props.children}
             </main>
         </Fragment>

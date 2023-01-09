@@ -1,33 +1,80 @@
-import React from 'react'
-import { Tabs } from 'antd';
+import React, { useEffect, useState, useCallback } from 'react'
+import Tabs from '../../components/UI/Tabs';
 import Researchers from '../../components/Admin/Researchers/Researchers';
+import { getResearchers } from '../../api/adminApi';
 const AdminResearchersPage = () => {
-    const labels = [
+    const [isLoading, setIsLoading] = useState(true);
+    const [error, setError] = useState(null);
+    const [bannedResearchers, setBannedResearchers] = useState([]);
+    const [basicResearchers, setBasicResearchers] = useState([]);
+    const [admins, setAdmins] = useState([]);
+    const [allResearchers, setAllResearchers] = useState([]);
+    const populateResearchers = (fetchedResearchers) => {
+        setBasicResearchers([]);
+        setBannedResearchers([]);
+        setAdmins([]);
+        fetchedResearchers.forEach(researcher => {
+            console.log(researcher)
+            // Researchers which are not admins and are not banned (BASIC)
+            if(!researcher.isAdmin && !researcher.isBanned){
+                setBasicResearchers(oldResearchers => [...oldResearchers, researcher])
+            }else if(researcher.isBanned){
+                setBannedResearchers(oldResearchers => [...oldResearchers, researcher])
+            }else if(researcher.isAdmin && !researcher.isBanned){
+                setAdmins(oldResearchers => [...oldResearchers, researcher])
+            }
+        });
+    }
+    const fetchData = useCallback(async () => {
+        setIsLoading(true);
+        let fetchedResearchers = [];
+        fetchedResearchers = await getResearchers({ setIsLoading, setError });
+        if(fetchedResearchers.length){
+            setAllResearchers(fetchedResearchers);
+        }
+        populateResearchers(fetchedResearchers);
+    }, []);
+    useEffect(() => {
+        fetchData();
+    },[fetchData]);
+    const tabs = [
         {
-            label: `All`,
             key: 1,
-            children: <Researchers fetchType="ALL"/>,
-        },{
-            label: `Researchers`,
+            href: "tabs-allFill",
+            id: "tabs-all-tabFill",
+            label: `All (${allResearchers.length})`,
+            active: true,
+            content: <Researchers isLoading={isLoading} error={error} researchers={allResearchers} setAllResearchers={setAllResearchers} setBasicResearchers={setBasicResearchers} setBannedResearchers={setBannedResearchers} setAdmins={setAdmins} basicResearchers={basicResearchers} bannedResearchers={bannedResearchers} admins={admins} allResearchers={allResearchers}/>
+        },
+        {
             key: 2,
-            children: <Researchers fetchType="BASIC"/>, 
-        },{
-            label: `Admins`,
+            href: "tabs-basicFill",
+            id: "tabs-basic-tabFill",
+            label: `Researchers (${basicResearchers.length})`,
+            active: false,
+            content: <Researchers isLoading={isLoading} error={error} researchers={basicResearchers} setAllResearchers={setAllResearchers} setBasicResearchers={setBasicResearchers} setBannedResearchers={setBannedResearchers} setAdmins={setAdmins} basicResearchers={basicResearchers} bannedResearchers={bannedResearchers} admins={admins} allResearchers={allResearchers}/>
+        },
+        {
             key: 3,
-            children: <Researchers fetchType="ADMIN"/>, 
-        },{
-            label: `Banned`,
+            href: "tabs-adminsFill",
+            id: "tabs-admins-tabFill",
+            label: `Admins (${admins.length})`,
+            active: false,
+            content: <Researchers isLoading={isLoading} error={error} researchers={admins} setAllResearchers={setAllResearchers} setBasicResearchers={setBasicResearchers} setBannedResearchers={setBannedResearchers} setAdmins={setAdmins} basicResearchers={basicResearchers} bannedResearchers={bannedResearchers} admins={admins} allResearchers={allResearchers}/>
+        },
+        {
             key: 4,
-            children: <Researchers fetchType="BANNED"/>, 
+            href: "tabs-bannedFill",
+            id: "tabs-banned-tabFill",
+            label: `Banned (${bannedResearchers.length})`,
+            active: false,
+            content: <Researchers isLoading={isLoading} error={error} researchers={bannedResearchers} setAllResearchers={setAllResearchers} setBasicResearchers={setBasicResearchers} setBannedResearchers={setBannedResearchers} setAdmins={setAdmins} basicResearchers={basicResearchers} bannedResearchers={bannedResearchers} admins={admins} allResearchers={allResearchers}/>
         }
     ]
     return (
         <div className='w-full flex justify-center'>
             <Tabs
-                className='w-full text-inherit px-2'
-                defaultActiveKey={1}
-                centered
-                items={labels}
+                tabs={tabs}
             />
         </div>
     )

@@ -1,5 +1,4 @@
 import { Fragment } from "react";
-// import useInput from "../../../hooks/use-input";
 import { useState } from "react";
 import { Eye, EyeSlash } from 'react-bootstrap-icons';
 import Button from "../../UI/Button";
@@ -16,8 +15,8 @@ const Credentials = (props) => {
         passwordChangeHandler(newPassword);
         confirmPasswordChangeHandler(newPassword);
     }
-    const [passwordVisible,setPasswordVisible] = useState(false);
-    const [confirmPasswordVisible,setConfirmPasswordVisible] = useState(false);
+    const [passwordVisible, setPasswordVisible] = useState(false);
+    const [confirmPasswordVisible, setConfirmPasswordVisible] = useState(false);
     const {
         value: email,
         isValid: emailIsValid,

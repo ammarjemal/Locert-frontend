@@ -7,20 +7,12 @@ import Input from "../../UI/Input";
 import Select from "../../UI/Select";
 const PersonalInfo = (props) => {
     const {
-        value: firstName,
-        isValid: firstNameIsValid,
-        isInvalid: firstNameIsInValid,
-        inputChangeHandler: firstNameChangeHandler,
-        inputBlurHandler: firstNameBlurHandler,
-    } = props.inputs.firstNameInput;
-
-    const {
-        value: lastName,
-        isValid: lastNameIsValid,
-        isInvalid: lastNameIsInValid,
-        inputChangeHandler: lastNameChangeHandler,
-        inputBlurHandler: lastNameBlurHandler,
-    } = props.inputs.lastNameInput;
+        value: fullName,
+        isValid: fullNameIsValid,
+        isInvalid: fullNameIsInValid,
+        inputChangeHandler: fullNameChangeHandler,
+        inputBlurHandler: fullNameBlurHandler,
+    } = props.inputs.fullNameInput;
 
     const {
         value: gender,
@@ -38,29 +30,19 @@ const PersonalInfo = (props) => {
         inputBlurHandler: titleBlurHandler,
     } = props.inputs.titleInput;
 
-    const formIsValid = firstNameIsValid && lastNameIsValid && genderIsValid && titleIsValid;
+    const formIsValid = fullNameIsValid && genderIsValid && titleIsValid;
 
     return (
         <Fragment>
             <Input
-                onChange={firstNameChangeHandler}
-                onBlur={firstNameBlurHandler}
-                value={firstName}
-                isInValid={firstNameIsInValid}
-                id="firstName"
+                onChange={fullNameChangeHandler}
+                onBlur={fullNameBlurHandler}
+                value={fullName}
+                isInValid={fullNameIsInValid}
+                id="fullName"
                 type="text"
                 variant="basic"
-                placeholder="First name"
-            />
-            <Input
-                onChange={lastNameChangeHandler}
-                onBlur={lastNameBlurHandler}
-                value={lastName}
-                isInValid={lastNameIsInValid}
-                id="lastName"
-                type="text"
-                variant="basic"
-                placeholder="Last name"
+                placeholder="Full name"
             />
             <Select
                 onChange={genderChangeHandler}
@@ -105,9 +87,10 @@ const PersonalInfo = (props) => {
                         props.setPage(props.page + 1);
                         props.setFormData({ 
                             ...props.formData,
-                            displayName: title + ' ' + firstName + ' ' + lastName,
-                            gender,
+                            fullName,
+                            displayName: title + ' ' + fullName,
                             title,
+                            gender,
                         })
                 }}>Next <ArrowRightShort className={props.styles.btnNextSvgStyles}/></Button>
             </div>
